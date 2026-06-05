@@ -47,3 +47,36 @@ Content-Type: application/json
   "loginId": "metam_juhi",
   "password": "wrong"
 }
+
+### 1. 마스터 계정 (본사 - 관리자)
+POST http://localhost:8080/api/users
+Content-Type: application/json
+
+{
+  "loginId": "master",
+  "password": "master1234",
+  "name": "본사관리자",
+  "role": "admin"
+}
+
+### 2. 메타엠 계정 (CS 접수자)
+POST http://localhost:8080/api/users
+Content-Type: application/json
+
+{
+  "loginId": "metam",
+  "password": "metam1234",
+  "name": "메타엠담당",
+  "role": "metam"
+}
+
+### 3. 로젠 계정 (택배사 검토자)
+POST http://localhost:8080/api/users
+Content-Type: application/json
+
+{
+  "loginId": "logen",
+  "password": "logen1234",
+  "name": "로젠담당",
+  "role": "logen"
+}

@@ -1,5 +1,6 @@
 package com.fnf.incident;
 
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -7,32 +8,33 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
 
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;  // 암호화 도구 가져오기
 
-    public UserController(UserRepository userRepository) {
+    public UserController(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
-    // 1) 테스트용 사용자 1명 만들기 (로그인 시험하려면 사용자가 있어야 함)
+    // 1) 사용자 만들기 - 비밀번호를 암호화해서 저장
     @PostMapping("/users")
     public User createUser(@RequestBody User user) {
+        // 입력받은 비밀번호를 암호화한 값으로 바꿔서 저장
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         return userRepository.save(user);
     }
 
-    // 2) 로그인
+    // 2) 로그인 - 암호화된 비밀번호끼리 비교
     @PostMapping("/login")
     public String login(@RequestBody User input) {
-        // 입력한 아이디로 사용자 찾기
         User found = userRepository.findByLoginId(input.getLoginId());
 
-        // 그런 아이디가 없으면
         if (found == null) {
             return "실패: 존재하지 않는 아이디입니다";
         }
-        // 비밀번호가 다르면
-        if (!found.getPassword().equals(input.getPassword())) {
+        // 입력한 비밀번호와 DB의 암호화된 비밀번호를 비교 (matches가 알아서 비교해줌)
+        if (!passwordEncoder.matches(input.getPassword(), found.getPassword())) {
             return "실패: 비밀번호가 일치하지 않습니다";
         }
-        // 둘 다 통과하면 성공
         return "성공: " + found.getName() + "님 환영합니다 (권한: " + found.getRole() + ")";
     }
 }
