@@ -18,3 +18,32 @@ GET http://localhost:8080/api/incidents/1
 
 ### id 1번 사고건 삭제
 DELETE http://localhost:8080/api/incidents/1
+
+### 테스트 사용자 만들기
+POST http://localhost:8080/api/users
+Content-Type: application/json
+
+{
+  "loginId": "metam_juhi",
+  "password": "pass1234",
+  "name": "주휘인",
+  "role": "metam"
+}
+
+### 로그인 시도 (성공해야 함)
+POST http://localhost:8080/api/login
+Content-Type: application/json
+
+{
+  "loginId": "metam_juhi",
+  "password": "pass1234"
+}
+
+### 로그인 시도 (비밀번호 틀림 - 실패해야 함)
+POST http://localhost:8080/api/login
+Content-Type: application/json
+
+{
+  "loginId": "metam_juhi",
+  "password": "wrong"
+}
