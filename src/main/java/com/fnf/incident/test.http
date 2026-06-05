@@ -1,0 +1,20 @@
+### 사고건 1개 저장
+POST http://localhost:8080/api/incidents
+Content-Type: application/json
+
+{
+  "brand": "MLB",
+  "orderNo": "OD202606051234567",
+  "trackingNo": "91956001852",
+  "incidentType": "송장흐름없음",
+  "status": "pending"
+}
+
+### 사고건 전체 목록 보기
+GET http://localhost:8080/api/incidents
+
+### id 1번 사고건 1개만 보기
+GET http://localhost:8080/api/incidents/1
+
+### id 1번 사고건 삭제
+DELETE http://localhost:8080/api/incidents/1
