@@ -29,4 +29,16 @@ public class Incident {
     private String color;        // 컬러
     private String size;         // 사이즈
     private String memo;         // 메모
+
+    private Integer quantity = 1; // 수량 (기본값 1)
+    private Integer amount = 0;   // 금액 (기본값 0)
+
+    private String createdAt;     // 접수일시 (등록 시 자동 저장)
+    private String createdBy;     // 등록자
+
+    private String approvedBy;    // 승인자
+    private String approvedAt;    // 승인일시
+    private String rejectedBy;    // 반려자
+    private String rejectedAt;    // 반려일시
+    private String rejectReason;  // 반려사유
 }
