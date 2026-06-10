@@ -41,4 +41,11 @@ public class Incident {
     private String rejectedBy;    // 반려자
     private String rejectedAt;    // 반려일시
     private String rejectReason;  // 반려사유
+
+    private String withdrawnBy;   // 철회자
+    private String withdrawnAt;   // 철회일시
+    private String withdrawReason;// 철회사유
+
+    private String settledBy;     // 정산자
+    private String settledAt;     // 정산일시
 }
