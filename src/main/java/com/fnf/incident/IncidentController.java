@@ -83,7 +83,7 @@ public class IncidentController {
             return ResponseEntity.notFound().build();  // 해당 사고건 없음 (404)
         }
         // 정산이 끝난 건은 철회할 수 없게 막는다
-        if ("정산완료".equals(incident.getStatus())) {
+        if ("settled".equals(incident.getStatus())) {
             return ResponseEntity.badRequest().body("정산 완료된 사고건은 철회할 수 없습니다");  // 400
         }
         incident.setStatus("withdrawn");
@@ -102,10 +102,10 @@ public class IncidentController {
             return ResponseEntity.notFound().build();  // 해당 사고건 없음 (404)
         }
         // 이미 정산완료된 건은 다시 처리하지 않음
-        if ("정산완료".equals(incident.getStatus())) {
+        if ("settled".equals(incident.getStatus())) {
             return ResponseEntity.badRequest().body("이미 정산 완료된 사고건입니다");  // 400
         }
-        incident.setStatus("정산완료");
+        incident.setStatus("settled");
         incident.setSettledBy(body.get("settledBy"));   // 정산 처리한 사람
         incident.setSettledAt(LocalDateTime.now().toString());  // 정산 시각 (서버 기준)
         return ResponseEntity.ok(repository.save(incident));
@@ -133,11 +133,11 @@ public class IncidentController {
             Long id = Long.valueOf(rawId.toString());
             Incident incident = repository.findById(id).orElse(null);
             // 없는 건, 이미 정산완료된 건은 건너뜀
-            if (incident == null || "정산완료".equals(incident.getStatus())) {
+            if (incident == null || "settled".equals(incident.getStatus())) {
                 skipped.add(id);
                 continue;
             }
-            incident.setStatus("정산완료");
+            incident.setStatus("settled");
             incident.setSettledBy(settledBy);
             incident.setSettledAt(now);
             repository.save(incident);
