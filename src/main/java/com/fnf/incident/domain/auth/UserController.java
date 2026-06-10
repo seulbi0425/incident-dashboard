@@ -1,5 +1,7 @@
-package com.fnf.incident;
+package com.fnf.incident.domain.auth;
 
+import com.fnf.incident.domain.auth.dto.LoginRequest;
+import com.fnf.incident.repository.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,7 +27,7 @@ public class UserController {
 
     // 2) 로그인 - 암호화된 비밀번호끼리 비교
     @PostMapping("/login")
-    public String login(@RequestBody User input) {
+    public String login(@RequestBody LoginRequest input) {
         User found = userRepository.findByLoginId(input.getLoginId());
 
         if (found == null) {

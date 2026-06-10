@@ -1,5 +1,6 @@
-package com.fnf.incident;
+package com.fnf.incident.domain.incident;
 
+import com.fnf.incident.repository.IncidentRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.time.LocalDateTime;

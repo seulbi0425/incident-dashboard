@@ -1,4 +1,4 @@
-package com.fnf.incident;
+package com.fnf.incident.global.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

@@ -1,4 +1,4 @@
-package com.fnf.incident;
+package com.fnf.incident.domain.incident;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;

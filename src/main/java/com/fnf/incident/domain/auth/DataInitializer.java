@@ -1,5 +1,6 @@
-package com.fnf.incident;
+package com.fnf.incident.domain.auth;
 
+import com.fnf.incident.repository.UserRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
