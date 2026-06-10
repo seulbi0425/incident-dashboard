@@ -22,6 +22,8 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable())
                 .cors(cors -> {})
+                // H2 콘솔은 iframe으로 렌더링되므로 same-origin 프레임 허용
+                .headers(headers -> headers.frameOptions(frame -> frame.sameOrigin()))
                 .authorizeHttpRequests(auth -> auth.anyRequest().permitAll());
         return http.build();
     }
