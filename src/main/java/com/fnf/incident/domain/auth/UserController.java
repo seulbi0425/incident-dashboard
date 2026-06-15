@@ -2,9 +2,12 @@ package com.fnf.incident.domain.auth;
 
 import com.fnf.incident.domain.auth.dto.LoginRequest;
 import com.fnf.incident.repository.UserRepository;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+@Tag(name = "사용자/인증", description = "계정 생성 및 로그인 API")
 @RestController
 @RequestMapping("/api")
 public class UserController {
@@ -18,6 +21,7 @@ public class UserController {
     }
 
     // 1) 사용자 만들기 - 비밀번호를 암호화해서 저장
+    @Operation(summary = "계정 생성", description = "새 사용자 계정을 생성합니다. 비밀번호는 암호화하여 저장됩니다.")
     @PostMapping("/users")
     public User createUser(@RequestBody User user) {
         // 입력받은 비밀번호를 암호화한 값으로 바꿔서 저장
@@ -26,6 +30,7 @@ public class UserController {
     }
 
     // 2) 로그인 - 암호화된 비밀번호끼리 비교
+    @Operation(summary = "로그인", description = "아이디와 비밀번호로 로그인합니다. 암호화된 비밀번호를 비교해 성공/실패 메시지를 반환합니다.")
     @PostMapping("/login")
     public String login(@RequestBody LoginRequest input) {
         User found = userRepository.findByLoginId(input.getLoginId());
