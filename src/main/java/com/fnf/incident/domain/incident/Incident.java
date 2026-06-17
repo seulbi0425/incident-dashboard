@@ -7,6 +7,8 @@ import jakarta.persistence.Id;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Getter
 @Setter
@@ -46,6 +48,6 @@ public class Incident {
     private String withdrawnAt;   // 철회일시
     private String withdrawReason;// 철회사유
 
-    private String settledBy;     // 정산자
-    private String settledAt;     // 정산일시
+    private String settledBy;          // 정산처리자
+    private LocalDateTime settledAt;   // 정산일시
 }

@@ -107,32 +107,30 @@ public class IncidentController {
 
     // 8) 사고건 단건 정산완료 처리  ← 새로 추가
     //    body 예시: { "settledBy": "본사관리자" }
-    @Operation(summary = "정산 완료 처리", description = "단일 사고건을 정산 완료 처리합니다. 상태를 settled로 변경합니다. 이미 정산완료되었거나 철회된 건은 처리할 수 없습니다.")
+    //    로젠 승인완료(approved) 상태인 건만 정산 가능
+    @Operation(summary = "정산 완료 처리", description = "승인완료(approved) 상태인 사고건을 정산 완료 처리합니다. 상태를 settled로 변경하고 정산처리자·정산일시를 기록합니다. 승인된 건이 아니면 400 오류를 반환합니다.")
     @PutMapping("/{id}/settle")
     public ResponseEntity<?> settle(@PathVariable Long id, @RequestBody Map<String, String> body) {
         Incident incident = repository.findById(id).orElse(null);
         if (incident == null) {
             return ResponseEntity.notFound().build();  // 해당 사고건 없음 (404)
         }
-        // 이미 정산완료된 건은 다시 처리하지 않음
-        if ("settled".equals(incident.getStatus())) {
-            return ResponseEntity.badRequest().body("이미 정산 완료된 사고건입니다");  // 400
-        }
-        // 철회된 건은 정산완료 처리할 수 없게 막는다
-        if ("withdrawn".equals(incident.getStatus())) {
-            return ResponseEntity.badRequest().body("철회된 사고건은 정산 완료 처리할 수 없습니다");  // 400
+        // 승인완료(approved) 상태인 건만 정산할 수 있다
+        if (!"approved".equals(incident.getStatus())) {
+            return ResponseEntity.badRequest().body("승인된 건만 정산할 수 있습니다");  // 400
         }
         incident.setStatus("settled");
         incident.setSettledBy(body.get("settledBy"));   // 정산 처리한 사람
-        incident.setSettledAt(LocalDateTime.now().toString());  // 정산 시각 (서버 기준)
+        incident.setSettledAt(LocalDateTime.now());     // 정산 시각 (서버 기준)
         return ResponseEntity.ok(repository.save(incident));
     }
 
     // 9) 사고건 일괄 정산완료 처리  ← 새로 추가
     //    화면에서 여러 건 체크 후 한 번에 정산완료로 변경
+    //    승인완료(approved) 상태인 건만 처리하고, 나머지는 건너뜀
     //    body 예시: { "ids": [1, 3, 5], "settledBy": "본사관리자" }
-    @Operation(summary = "정산 완료 일괄 처리", description = "여러 사고건을 한 번에 정산 완료 처리합니다. 없는 건·이미 정산완료된 건·철회된 건은 건너뜁니다.")
-    @PutMapping("/settle")
+    @Operation(summary = "정산 완료 일괄 처리", description = "여러 사고건을 한 번에 정산 완료 처리합니다. 승인완료(approved) 상태인 건만 처리되고, 없는 건·승인되지 않은 건은 건너뜁니다.")
+    @PutMapping("/settle-batch")
     public ResponseEntity<?> settleBatch(@RequestBody Map<String, Object> body) {
         // ids 목록 꺼내기
         Object rawIds = body.get("ids");
@@ -142,16 +140,16 @@ public class IncidentController {
         List<?> ids = (List<?>) rawIds;
         Object settledByObj = body.get("settledBy");
         String settledBy = settledByObj == null ? null : settledByObj.toString();
-        String now = LocalDateTime.now().toString();  // 같은 배치는 동일 시각으로 기록
+        LocalDateTime now = LocalDateTime.now();  // 같은 배치는 동일 시각으로 기록
 
         List<Long> settled = new ArrayList<>();   // 정산완료 처리된 id
-        List<Long> skipped = new ArrayList<>();   // 없거나 이미 정산완료라 건너뛴 id
+        List<Long> skipped = new ArrayList<>();   // 없거나 승인 상태가 아니라 건너뛴 id
 
         for (Object rawId : ids) {
             Long id = Long.valueOf(rawId.toString());
             Incident incident = repository.findById(id).orElse(null);
-            // 없는 건, 이미 정산완료된 건, 철회된 건은 건너뜀 (철회 절대 변경 금지)
-            if (incident == null || "settled".equals(incident.getStatus()) || "withdrawn".equals(incident.getStatus())) {
+            // 없는 건, 승인완료(approved)가 아닌 건은 건너뜀
+            if (incident == null || !"approved".equals(incident.getStatus())) {
                 skipped.add(id);
                 continue;
             }
